@@ -6,7 +6,6 @@
 #include <stdio.h>
 
 int myAtoi(char* str) {
-    int len = strlen(str);
     int pos = 0;
 
     // skip white
