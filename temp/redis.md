@@ -43,6 +43,8 @@ Redis has
 
 # data structure
 
+#### list
+
 - list adlist.h
 
   这是个最基本的list的实现
@@ -59,27 +61,48 @@ ziplist暂时放一下，但是quicklist本身应该是可以看懂的。
 
 在这个底层就是一个双向链表，对于链表的操作。关键结构：
 
+```
 typedef struct quicklist {
+
     quicklistNode *head;
+
     quicklistNode *tail;
+
     unsigned long count;        /* total count of all entries in all ziplists */
+
     unsigned int len;           /* number of quicklistNodes */
+
     int fill : 16;              /* fill factor for individual nodes */
+
     unsigned int compress : 16; /* depth of end nodes not to compress;0=off */
+
 } quicklist;
 
 typedef struct quicklistNode {
+
     struct quicklistNode *prev;
+
     struct quicklistNode *next;
+
     unsigned char *zl;
+
     unsigned int sz;             /* ziplist size in bytes */
+
     unsigned int count : 16;     /* count of items in ziplist */
+
     unsigned int encoding : 2;   /* RAW==1 or LZF==2 */
+
     unsigned int container : 2;  /* NONE==1 or ZIPLIST==2 */
+
     unsigned int recompress : 1; /* was this node previous compressed? */
+
     unsigned int attempted_compress : 1; /* node can't compress; too small */
+
     unsigned int extra : 10; /* more bits to steal for future usage */
+
 } quicklistNode;
+
+```
 
 
 
@@ -112,6 +135,68 @@ redis_server!processInputBuffer+0x216 [c:\release\redis\src\networking.c @ 1438]
 redis_server!readQueryFromClient+0x2da [c:\release\redis\src\networking.c @ 1503]
 
 redis_server!redis_main+0x58c [c:\release\redis\src\server.c @ 4157]
+
+
+
+#### dict
+
+dict是hashtable的实现，整个的redis存key是使用dict存放的，dict的每个value，可以是dict、set、list、string这些结构。dict是其中最关键的数据结构。
+
+```
+typedef struct dictEntry {
+    void *key;
+    union {
+        void *val;
+        uint64_t u64;
+        int64_t s64;
+        double d;
+    } v;
+    struct dictEntry *next;
+} dictEntry;
+
+typedef struct dictType {
+    unsigned int (*hashFunction)(const void *key);
+    void *(*keyDup)(void *privdata, const void *key);
+    void *(*valDup)(void *privdata, const void *obj);
+    int (*keyCompare)(void *privdata, const void *key1, const void *key2);
+    void (*keyDestructor)(void *privdata, void *key);
+    void (*valDestructor)(void *privdata, void *obj);
+} dictType;
+
+/* This is our hash table structure. Every dictionary has two of this as we
+ * implement incremental rehashing, for the old to the new table. */
+typedef struct dictht {
+    dictEntry **table;
+    PORT_ULONG size;
+    PORT_ULONG sizemask;
+    PORT_ULONG used;
+} dictht;
+
+typedef struct dict {
+    dictType *type;
+    void *privdata;
+    dictht ht[2];
+    PORT_LONG rehashidx; /* rehashing not in progress if rehashidx == -1 */
+    int iterators; /* number of iterators currently running */
+} dict;
+
+/* If safe is set to 1 this is a safe iterator, that means, you can call
+ * dictAdd, dictFind, and other functions against the dictionary even while
+ * iterating. Otherwise it is a non safe iterator, and only dictNext()
+ * should be called while iterating. */
+typedef struct dictIterator {
+    dict *d;
+    PORT_LONG index;
+    int table, safe;
+    dictEntry *entry, *nextEntry;
+    /* unsafe iterator fingerprint for misuse detection. */
+    PORT_LONGLONG fingerprint;
+} dictIterator;
+```
+
+
+
+
 
 
 
