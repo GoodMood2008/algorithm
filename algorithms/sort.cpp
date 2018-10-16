@@ -34,6 +34,40 @@ void insertSort(int* a, int n) {
     }
 }
 
+void exchange(int* a, int i, int j) {
+    int temp = a[i];
+    a[i] = a[j];
+    a[j] = temp;    
+}
+
+int patition(int*a, int p, int q) {
+    int x = a[p];
+    int i = p;
+    for (int j = p + 1; j <= q; j++) {
+        if (a[j] < x) {
+            i++;
+            exchange(a, i, j);
+        }
+    }
+    exchange(a, p, i);
+    return i;
+}
+
+void quickSort(int* a, int p, int q) {
+    if (p < q) {
+        int  i = patition(a, p, q);
+        quickSort(a, p, i - 1);
+        quickSort(a, i + 1, q);
+    }
+}
+
+void quickSort(int* a, int n) {
+    if (n == 0 || n == 1) {
+        return;
+    }
+    quickSort(a, 0, n - 1);
+}
+
 void print(int* a, int n) {
     printf("{");
     for (int i = 0; i < n; i++) {
@@ -51,4 +85,7 @@ int main() {
     int b[5] = {5, 4, 3, 2, 1};
     insertSort(b, 5);
     print(b, 5);
+    int c[5] = {5, 4, 3, 2, 1};
+    quickSort(c, 5);
+    print(c, 5);
 }
