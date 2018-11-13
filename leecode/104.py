@@ -33,60 +33,42 @@ class Solution:
 
     # BFS T(n) = O(n)
 
-    def levelOrder(self, root):
+    def maxDepth(self, root):
         """
         :type root: TreeNode
-        :rtype: List[List[int]]
+        :rtype: int
         """
-        if root == None:return []
-        result = list()
+        if root == None:return 0
+        result = 0
 
         queue = collections.deque()
         queue.append(root)
 
         while queue:
-            result.append([]) 
+            result += 1 
             size = len(queue)   
             for i in range(size):
                 node = queue.popleft()
-                result[-1].append(node.val)
                 if node.left: queue.append(node.left)
                 if node.right: queue.append(node.right) 
         return result
 
 
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     # DFS T(n) = O(n)
-    def levelOrder1(self, root):
+    def maxDepth1(self, root):
         """
         :type root: TreeNode
-        :rtype: List[List[int]]
+        :rtype: int
         """
-        self.result = list()
+        self.depth = 0
         self.orderByLevel(root, 0)
-        return self.result
+        return self.depth + 1
 
     def orderByLevel(self, node, level):
         if None == node:
             return
-        if len(self.result) < level + 1:
-            self.result.append([])
-        self.result[level].append(node.val)
+        if self.depth < level:
+            self.depth = level
         self.orderByLevel(node.left, level + 1)
         self.orderByLevel(node.right, level + 1)
  
@@ -101,15 +83,16 @@ class Solution:
 
 
 
-#Given a binary tree, return the level order traversal of its nodes' values. (ie, from left to right, level by level).
+#Given a binary tree, find its maximum depth.
+#The maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.
 import unittest
 class SolutionTest(unittest.TestCase):
     def testSolution(self):
         solution = Solution()
         array = [3,9,20,None,None,15,7]
         tree = solution.convertArrayToTree(array)
-        self.assertTrue(solution.levelOrder(tree) == [[3], [9,20], [15,7]])
-        self.assertTrue(solution.levelOrder1(tree) == [[3], [9,20], [15,7]])
+        self.assertTrue(solution.maxDepth(tree) == 3)
+        self.assertTrue(solution.maxDepth1(tree) == 3)
 
 
 if __name__ == "__main__" : unittest.main()
