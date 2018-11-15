@@ -73,8 +73,19 @@ class Solution:
         self.orderByLevel(node.right, level + 1)
  
 
-
-
+    # DFS T(n) = O(n)
+    def maxDepth2(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+        if root == None: return 0
+        if not root.left:
+            return 1 + self.maxDepth2(root.right)
+        elif not root.right:
+            return 1 + self.maxDepth2(root.left)
+        else:
+            return 1 + max(self.maxDepth2(root.left), self.maxDepth2(root.right))
 
 
 
@@ -93,6 +104,6 @@ class SolutionTest(unittest.TestCase):
         tree = solution.convertArrayToTree(array)
         self.assertTrue(solution.maxDepth(tree) == 3)
         self.assertTrue(solution.maxDepth1(tree) == 3)
-
+        self.assertTrue(solution.maxDepth2(tree) == 3)
 
 if __name__ == "__main__" : unittest.main()

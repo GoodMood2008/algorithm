@@ -78,8 +78,16 @@ class Solution:
  
 
 
-
-
+    # DFS T(n) = O(n)
+    def minDepth2(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
+        if root == None: return 0
+        if root.left == None and root.right == None:
+            return 1
+        return 1 + min(self.minDepth2(root.left), self.minDepth2(root.right))
 
 
 
@@ -97,6 +105,6 @@ class SolutionTest(unittest.TestCase):
         tree = solution.convertArrayToTree(array)
         self.assertTrue(solution.minDepth(tree) == 2)
         self.assertTrue(solution.minDepth1(tree) == 2)
-
+        self.assertTrue(solution.minDepth2(tree) == 2)
 
 if __name__ == "__main__" : unittest.main()
