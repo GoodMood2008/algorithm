@@ -1,16 +1,19 @@
 #!/user/bin/python
 #-*- coding:utf-8 -*-
-import sys
+
+# Definition for a binary tree node.
+
 
 #Say you have an array for which the ith element is the price of a given stock on day i.
 #Design an algorithm to find the maximum profit. You may complete at most two transactions.
 class Solution:
+    #greedy alg: T(n) = O(n)
     def maxProfit(self, prices):
         """
         :type prices: List[int]
         :rtype: int
         """
-        if not prices: return 0
+if not prices: return 0
 
         profit = [[[0 for _ in range(2)] for _ in range(3)] for _ in range(len(prices))]
 
@@ -31,7 +34,8 @@ class Solution:
         end = len(prices) - 1
 
         return max(profit[end][0][0], profit[end][1][0], profit[end][2][0])
-            
+
+
 
 
 
