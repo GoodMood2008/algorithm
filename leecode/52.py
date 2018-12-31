@@ -52,6 +52,28 @@ class Solution:
                 self.dfs1(queens + [col], xy_dif + [row - col], xy_sum + [row + col])
 
 
+    # bit count accelerate
+    def totalNQueens2(self, n):
+        """
+        :type n: int
+        :rtype: List[List[str]]
+        """
+        self.count = 0
+        self.n = n
+        self.dfs2(0, 0, 0, 0)
+        return self.count
+
+    def dfs2(self, row, col, pie, na):
+        if row >= self.n:
+            self.count += 1
+            return
+
+        bits = (~(col|pie|na)) & ((1 << self.n) - 1)
+        while bits:
+            p = bits & (-bits)
+            self.dfs2(row+1, col|p, (pie|p)<<1, (na|p)>>1)
+            bits &= (bits - 1)
+
 
 #The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
 import unittest
@@ -60,6 +82,7 @@ class SolutionTest(unittest.TestCase):
         solution = Solution()
         self.assertTrue(solution.totalNQueens(4) ==  2)
         self.assertTrue(solution.totalNQueens1(4) ==  2)
+        self.assertTrue(solution.totalNQueens2(4) ==  2)
 
 if __name__ == "__main__" : unittest.main()
 
