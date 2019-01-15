@@ -26,7 +26,7 @@ class Solution(object):
         if count < (len(org) - 1):
             return False
 
-        #travase org，
+        #travase org， think as ingress thero, the last element has ingress 0
         for j in org[::-1]:
             print(org, " ", seqs)
             print(ingress)
