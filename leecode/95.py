@@ -14,18 +14,84 @@ class Solution:
         :type n: int
         :rtype: List[TreeNode]
         """
-        result = list(map(lambda r : self.traverseBFS(r), self.generateSubTrees(range(1, n + 1))))
+        if not n: return []
+        return self.generateSubTrees(1, n)
+
+
+    def generateSubTrees(self, start, end):
+        if start > end:
+            return [None]
+        if start == end:
+            return [TreeNode(start)]
+        result = []
+        for v in range(start, end + 1):
+            left = self.generateSubTrees(start, v - 1)
+            right = self.generateSubTrees(v + 1, end)
+            for l1 in left:
+                for r1 in right:
+                    node = TreeNode(v)
+                    node.left = l1
+                    node.right = r1
+                    result.append(node)
+        return result        
+
+    def convertArraysToTree(self, arrays):
+        if not arrays:return []
+        result = []
+        for array in arrays:
+            result.append(self.convertArrayToTree(array))
+        return result
+
+    def convertArrayToTree(self, array):
+        if not array: return None
+        head = array[0]
+        self.convertArrayToSubTree([head], array, 1)
+        return head
+
+    def convertArrayToSubTree(self, leverNodes, array, n):
+        nextLevelNodes = []
+        for node in leverNodes:
+            if n >= len(array):
+                return
+            node.left = None if not array[n] else TreeNode(array[n])
+            n += 1
+            if n >= len(array):
+                return
+            node.right = None if not array[n] else TreeNode(array[n])
+            n += 1
+            if node.left:
+                nextLevelNodes.append(node.left)
+            if node.right:
+                nextLevelNodes.append(node.right)
+        self.convertArrayToSubTree(nextLevelNodes, array, n)
+
+
+
+
+
+
+
+
+
+
+
+    def generateTrees1(self, n):
+        """
+        :type n: int
+        :rtype: List[TreeNode]
+        """
+        result = list(map(lambda r : self.traverseBFS1(r), self.generateSubTrees1(range(1, n + 1))))
         print(result)
         return result
 
 
-    def generateSubTrees(self, values):
+    def generateSubTrees1(self, values):
         if not values:
             return [None]
         result = []
         for value in values:
-            left = self.generateSubTrees(filter(lambda v : v < value, values))
-            right = self.generateSubTrees(filter(lambda v : v > value, values))
+            left = self.generateSubTrees1(filter(lambda v : v < value, values))
+            right = self.generateSubTrees1(filter(lambda v : v > value, values))
             for l1 in left:
                 for r1 in right:
                     node = TreeNode(value)
@@ -34,7 +100,7 @@ class Solution:
                     result.append(node)
         return result
 
-    def traverseBFS(self, root):
+    def traverseBFS1(self, root):
         dq = collections.deque()
         dq.append(root)
         result = []
@@ -64,6 +130,7 @@ class SolutionTest(unittest.TestCase):
                   [1,None,2,None,3]
                 ]
 
-        self.assertTrue(solution.generateTrees(3) == output)
+        #self.assertTrue(solution.generateTrees1(3) == output)
+
 
 if __name__ == "__main__" : unittest.main()
