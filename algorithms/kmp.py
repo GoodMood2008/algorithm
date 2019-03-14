@@ -15,6 +15,8 @@ class Solution:
                 return i - len(pattern) + 1
         return -1    
 
+    # kmp is seemed much more simple than bm in writen style, but
+    # next function is much more harder to understand than bm 
     def getNexts(self, pattern):
         nexts = [-1] * len(pattern)
         k = -1
