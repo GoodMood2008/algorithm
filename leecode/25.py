@@ -17,7 +17,6 @@ class Solution(object):
         return head
 
     def convertListToArray(self, head):
-        print(head)
         if head == None:
             return []
         result = []
@@ -30,51 +29,50 @@ class Solution(object):
 
     def printList(self, head):
         cur = head
+        print('[', end='')
         while cur:
-            print("%d "%(cur.val))
+            print('%d '%cur.val, end='')
             cur = cur.next  
-        print()  
+        print(']')  
 
-    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+    def reverseKGroup1(self, head: ListNode, k: int) -> ListNode:
         if not head: return None
-
-        centinail = ListNode(-1)
-        prev, cur, last= head, head, head
+        cur = head
         count = 0
-        while cur:
-            if count == k:
-                last.next = self.reverseKGroup(cur, k)
-                return centinail.next
-            else:
+        while cur != None and count != k:
+            cur = cur.next
+            count += 1
+        if count == k:
+            newCur = self.reverseKGroup(cur, k)
+
+            centinail = ListNode(-1)
+            prev, cur, last = head, head, head
+            while count:
                 if prev is not cur:
                     centinail.next, cur = cur, cur.next, 
                     centinail.next.next, prev = prev, centinail.next
                 else:
                     centinail.next, cur = prev, cur.next
-                count += 1
-        last.next = None
-        return centinail.next
+                count -= 1
+            last.next = newCur
+            return centinail.next
+        return head
 
-    def reverseKGroup1(self, head: ListNode, k: int) -> ListNode:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
         if not head: return None
-
-        cur, count = head, 0
-        while cur != None and count != k:
+        cur = head
+        count = 0
+        while cur and count != k:
             cur = cur.next
             count += 1
         if count == k:
-            cur = self.reverseKGroup1(cur, k)
-            count -= 1
+            cur = self.reverseKGroup(cur, k)
             while count:
+                temp, head.next, cur = head.next, cur, head # insert the head before cur
+                head = temp # move head to 
                 count -= 1
-                temp = head.next
-                head.next = cur
-                cur.next = head
-                head = temp
             head = cur
         return head
-
-
 
 
 
@@ -92,13 +90,6 @@ class SolutionTest(unittest.TestCase):
         self.assertTrue(solution.convertListToArray(solution.reverseKGroup(head, 2)) == [2, 1, 4, 3, 5])
         array = [1, 2, 3, 4, 5]
         head = solution.convertArrayToList(array)
-        self.assertTrue(solution.convertListToArray(solution.reverseKGroup(head, 3)) == [3, 2, 1, 5, 4])        
-        array = [1, 2, 3, 4, 5]
-        head = solution.convertArrayToList(array)
-        self.assertTrue(solution.convertListToArray(solution.reverseKGroup1(head, 2)) == [2, 1, 4, 3, 5])
-        array = [1, 2, 3, 4, 5]
-        head = solution.convertArrayToList(array)
-        self.assertTrue(solution.convertListToArray(solution.reverseKGroup1(head, 3)) == [3, 2, 1, 5, 4])
-
+        self.assertTrue(solution.convertListToArray(solution.reverseKGroup(head, 3)) == [3, 2, 1, 4, 5])        
 
 if __name__ == "__main__" : unittest.main()
